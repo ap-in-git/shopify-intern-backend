@@ -1,0 +1,60 @@
+{{ template "header.tmpl" }}
+<div class="container pt-3">
+    {{if ne .error ""}}
+    <div class="alert alert-danger" role="alert">
+        {{.error}}
+    </div>
+    {{end}}
+    {{if ne .success ""}}
+    <div class="alert alert-secondary" role="alert">
+        {{.success}}
+    </div>
+    {{end}}
+     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addWareHouseModal">Add warehouse</button>
+     <div class="modal fade" id="addWareHouseModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" action="/warehouse">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add warehouse</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="warehouseName" class="form-label">Warehouse name</label>
+                        <input type="text"  name="name" required class="form-control" id="warehouseName" placeholder="Santa warehouse">
+                    </div>
+                    <div class="mb-3">
+                        <label for="warehouseLocation" class="form-label">Warehouse location</label>
+                        <input type="text" name="location" required class="form-control" id="warehouseLocation" placeholder="Waterloo ontario">
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+                 </form>
+            </div>
+        </div>
+        </div>
+         <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Location</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{ range $key, $value := .warehouses }}
+            <tr>
+                <th>{{$value.ID}}</th>
+                <td>{{$value.Name}}</td>
+                <td>{{$value.Location}}</td>
+            </tr>
+        {{ end }}
+        </tbody>
+    </table>
+</div>
+{{template "footer.tmpl"}}

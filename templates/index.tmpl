@@ -1,0 +1,183 @@
+{{ template "header.tmpl" }}
+<div class="container pt-3">
+    {{if ne .error ""}}
+        <div class="alert alert-danger" role="alert">
+            {{.error}}
+        </div>
+    {{end}}
+    {{if ne .success ""}}
+        <div class="alert alert-secondary" role="alert">
+            {{.success}}
+        </div>
+    {{end}}
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addWareHouseModal">Add product</button>
+    <div class="modal fade" id="addWareHouseModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" action="/product">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add product</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="warehouseLocation" class="form-label">Warehouse</label>
+                            <select class="form-control" id="warehouseLocation" name="warehouse">
+                                {{ range $key, $warehouse := .warehouses }}
+                                    <option value="{{$warehouse.ID}}">{{$warehouse.Name}}</option>
+                                {{ end }}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" name="name" required class="form-control" id="name" placeholder="Chocolate">
+                        </div>
+                        <div class="mb-3">
+                            <label for="quantity" class="form-label">Unit</label>
+                            <select class="form-control" id="warehouseLocation" name="unit">
+                                <option value="kg">kg</option>
+                                <option value="l">litre</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="price" class="form-label">Quantity</label>
+                            <input type="number" step="0.001" name="quantity" required class="form-control" id="price" placeholder="1">
+                        </div>
+                        <div class="mb-3">
+                            <label for="price" class="form-label">Price($)</label>
+                            <input type="number" step="0.001" name="price" required class="form-control" id="price" placeholder="1.24">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th >#</th>
+            <th >Name</th>
+            <th >Warehouse</th>
+            <th >Price($)</th>
+            <th >Unit</th>
+            <th >Quantity</th>
+            <th >Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{ range $key, $product := .products }}
+            <tr>
+                <td>
+                    {{$product.ID}}
+                </td>
+                <td>
+                    {{$product.Name}}
+                </td>
+                <td>
+
+                    {{$product.Warehouse.Name}}
+                </td>
+                <td>
+                    {{$product.Price}}
+                </td>
+                <td>
+                    {{$product.Unit}}
+                </td>
+                <td>
+                    {{$product.Quantity}}
+                </td>
+                <td>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProduct{{$product.ID}}">Edit</button>
+                    <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteProduct{{$product.ID}}">Delete</button>
+                    <div class="modal fade" id="editProduct{{$product.ID}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <form method="post" action="/product/update/{{$product.ID}}">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Edit product</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label for="warehouseLocation" class="form-label">Warehouse</label>
+                                            <select class="form-control" id="warehouseLocation" name="warehouse">
+                                                {{ range $warehouse := $.warehouses }}
+                                                    <option
+                                                            value="{{$warehouse.ID}}"
+                                                        {{if eq $product.WarehouseId $warehouse.ID}}
+                                                        selected="selected"
+                                                        {{end}}
+                                                        >{{$warehouse.Name}}</option>
+                                                {{ end }}
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="name" class="form-label">Name</label>
+                                            <input type="text" name="name" required class="form-control" value="{{$product.Name}}" id="name" placeholder="Chocolate">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="quantity" class="form-label">Unit</label>
+                                            <select class="form-control" id="warehouseLocation" name="unit">
+                                                <option value="kg"
+                                                        {{if eq $product.Unit "kg"}}
+                                                            selected="selected"
+                                                        {{end}}
+                                                >kg</option>
+                                                <option value="l"
+                                                        {{if eq $product.Unit "l"}}
+                                                            selected="selected"
+                                                        {{end}}
+                                                >litre</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="price" class="form-label">Quantity</label>
+                                            <input type="number" value="{{$product.Quantity}}" step="0.001" name="quantity" required class="form-control" id="price" placeholder="1">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="price" class="form-label">Price($)</label>
+                                            <input type="number" step="0.001" value="{{$product.Price}}" name="price" required class="form-control" id="price" placeholder="1.24">
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Update</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                  {{/* Delete modal*/}}
+                    <div class="modal fade" id="deleteProduct{{$product.ID}}" tabindex="-1"  aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <form method="post" action="/product/delete/{{$product.ID}}">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Delete product</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                       Are you sure you want to delete the product. This process is irreversible
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        {{ end }}
+        </tbody>
+    </table>
+</div>
+{{template "footer.tmpl"}}
