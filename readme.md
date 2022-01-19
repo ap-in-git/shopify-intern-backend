@@ -1,7 +1,9 @@
 #About
+
 Project made for shopify technical challenge.
 
 #Running project locally
+
 * Clone the repository and open terminal in project folder
 * run `go get ./`
 * run cp `.env.example .env`
